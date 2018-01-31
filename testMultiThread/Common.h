@@ -17,4 +17,8 @@ struct THREAD_INFO_PARAM {
 };
 
 
+#define WM_ACTION (WM_USER + 300)
+
+#define WM_THREAD_QUIT (WM_USER + 301)
+
 #endif

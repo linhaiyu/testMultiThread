@@ -17,7 +17,9 @@
 #include "resource.h"
 #include "afxwin.h"
 #include "afxcmn.h"
+#include <vector>
 
+using namespace std;
 
 class CtestMultiThreadView : public CFormView
 {
@@ -76,6 +78,21 @@ protected:
     CWinThread *m_pThreadA;
     CWinThread *m_pThreadB;
     CWinThread *m_pThreadC;
+
+    HANDLE m_ThreadNewAEvent;
+    HANDLE m_ThreadNewBEvent;
+    HANDLE m_ThreadNewCEvent;
+    CWinThread *m_pThreadMaster;
+    CWinThread *m_pThreadNewA;
+    CWinThread *m_pThreadNewB;
+    CWinThread *m_pThreadNewC;
+
+    vector<DWORD> m_vThreadIds;
+
+
+public:
+    afx_msg void OnBnClickedStartSynButton();
+    afx_msg void OnBnClickedStopSynButton();
 };
 
 #ifndef _DEBUG  // testMultiThreadView.cpp 中的调试版本
