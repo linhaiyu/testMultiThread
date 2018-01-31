@@ -77,7 +77,7 @@ UINT ThreadProcMaster(LPVOID lpParam)
 {
     vector<DWORD>* pV = (vector<DWORD>*)lpParam;
 
-    // TODO: 等待三个事件，然后发送Action消息
+    // 等待三个事件，然后发送Action消息
     HANDLE eventA = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewAEvent");
     HANDLE eventB = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewBEvent");
     HANDLE eventC = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewCEvent");

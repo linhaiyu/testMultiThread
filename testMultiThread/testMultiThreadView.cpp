@@ -236,6 +236,8 @@ void CtestMultiThreadView::OnBnClickedStopButton()
             int nIndex = dwRet - WAIT_OBJECT_0;
             handles[nIndex] = handles[nWaitThreadCount - 1];
             handles[nWaitThreadCount - 1] = NULL;
+            name[nIndex] = name[nWaitThreadCount - 1];
+            name[nWaitThreadCount - 1] = _T("");
             --nWaitThreadCount;
 
             if (nExitThreadCount >= 3)
@@ -357,7 +359,7 @@ void CtestMultiThreadView::OnBnClickedStopSynButton()
         {
             // 有线程退出
             ++nExitThreadCount;
-            CString name[] = {_T("NewA"), _T("NewB"), _T("NewC")};
+            CString name[] = {_T("NewA"), _T("NewB"), _T("NewC"), _T("Master")};
             CString str;
             str.Format("Thread %s 退出了~~~ 已退出 %d 个线程", name[dwRet], nExitThreadCount);
             UpdateList(str);
@@ -366,6 +368,8 @@ void CtestMultiThreadView::OnBnClickedStopSynButton()
             int nIndex = dwRet - WAIT_OBJECT_0;
             handles[nIndex] = handles[nWaitThreadCount - 1];
             handles[nWaitThreadCount - 1] = NULL;
+            name[nIndex] = name[nWaitThreadCount - 1];
+            name[nWaitThreadCount - 1] = _T("");
             --nWaitThreadCount;
 
             if (nExitThreadCount >= 4)
@@ -387,6 +391,6 @@ void CtestMultiThreadView::OnBnClickedStopSynButton()
     CloseHandle(m_ThreadNewBEvent);
     CloseHandle(m_ThreadNewCEvent);
 
-    CString str = _T("却时应该是所有线程都退出了~~");
+    CString str = _T("应该是所有线程都退出了~~");
     UpdateList(str);
 }
