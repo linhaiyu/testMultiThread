@@ -16,6 +16,15 @@ struct THREAD_INFO_PARAM {
     HWND hWnd; 
 };
 
+// ÊÂ¼þ Event Ãû³Æ
+// const CString WORKER_EVENT_X = _T("workerEventXXX");
+// const CString WORKER_EVENT_Y = _T("workerEventYYY");
+// const CString WORKER_EVENT_Z = _T("workerEventZZZ");
+
+#define WORKER_EVENT_X  ("workerEventXXX")
+#define WORKER_EVENT_Y  ("workerEventYYY")
+#define WORKER_EVENT_Z  ("workerEventZZZ")
+
 
 #define WM_ACTION (WM_USER + 300)
 

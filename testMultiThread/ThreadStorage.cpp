@@ -78,16 +78,15 @@ UINT ThreadProcMaster(LPVOID lpParam)
     vector<DWORD>* pV = (vector<DWORD>*)lpParam;
 
     // 等待三个事件，然后发送Action消息
-    HANDLE eventA = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewAEvent");
-    HANDLE eventB = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewBEvent");
-    HANDLE eventC = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewCEvent");
+    HANDLE eventA = OpenEvent(EVENT_ALL_ACCESS, TRUE, WORKER_EVENT_X);
+    HANDLE eventB = OpenEvent(EVENT_ALL_ACCESS, TRUE, WORKER_EVENT_Y);
+    HANDLE eventC = OpenEvent(EVENT_ALL_ACCESS, TRUE, WORKER_EVENT_Z);
 
     HANDLE handles[] = {eventA, eventB, eventC};
 
     while (g_threadMasterRunning)
     {
         DWORD dw = WaitForMultipleObjects(3, handles, TRUE, 6000);
-
         if (dw == WAIT_TIMEOUT)
         {
             continue;
@@ -118,6 +117,8 @@ UINT ThreadProcMaster(LPVOID lpParam)
         PostThreadMessage(id, WM_THREAD_QUIT, 0, 0);
     }
 
+    // TODO: Master线程内部等待所有Worker线程退出之后再退出
+    Sleep(8000);
     return 0;
 }
 
@@ -135,11 +136,13 @@ UINT ThreadProcNewA(LPVOID lpParam)
             ::PostMessage(hwnd, WM_UPDATE_A, (WPARAM)pStr, 0);
             
             Sleep(800);
-            HANDLE event = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewAEvent");
+            HANDLE event = OpenEvent(EVENT_ALL_ACCESS, TRUE, WORKER_EVENT_X);
             SetEvent(event);
         } 
         else if(msg.message == WM_THREAD_QUIT)
         {
+            CString *pStr = new CString(_T("MULTI:  ThreadProc New A exit..."));
+            ::PostMessage(hwnd, WM_UPDATE_A, (WPARAM)pStr, 0);        
             break;
         }
         else 
@@ -165,11 +168,14 @@ UINT ThreadProcNewB(LPVOID lpParam)
             ::PostMessage(hwnd, WM_UPDATE_B, (WPARAM)pStr, 0);
 
             Sleep(200);
-            HANDLE event = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewBEvent");
+            HANDLE event = OpenEvent(EVENT_ALL_ACCESS, TRUE, WORKER_EVENT_Y);
             SetEvent(event);
         } 
         else if(msg.message == WM_THREAD_QUIT)
         {
+            CString *pStr = new CString(_T("MULTI:  ThreadProc New B exit..."));
+            ::PostMessage(hwnd, WM_UPDATE_B, (WPARAM)pStr, 0);        
+        
             break;
         }
         else 
@@ -195,11 +201,14 @@ UINT ThreadProcNewC(LPVOID lpParam)
             ::PostMessage(hwnd, WM_UPDATE_C, (WPARAM)pStr, 0);
 
             Sleep(1100);
-            HANDLE event = OpenEvent(EVENT_ALL_ACCESS, TRUE, "NewCEvent");
+            HANDLE event = OpenEvent(EVENT_ALL_ACCESS, TRUE, WORKER_EVENT_Z);
             SetEvent(event);
         } 
         else if(msg.message == WM_THREAD_QUIT)
         {
+            CString *pStr = new CString(_T("MULTI:  ThreadProc New C exit..."));
+            ::PostMessage(hwnd, WM_UPDATE_C, (WPARAM)pStr, 0);        
+        
             break;
         }
         else 

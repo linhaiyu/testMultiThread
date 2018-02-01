@@ -203,6 +203,7 @@ void CtestMultiThreadView::OnBnClickedStopButton()
     int nExitThreadCount = 0;
     int nWaitThreadCount = 3;
     HANDLE handles[] = {(m_pThreadA->m_hThread), (m_pThreadB->m_hThread), (m_pThreadC->m_hThread)};
+    CString name[] = {_T("A"), _T("B"), _T("C")};
 
     // 线程退出标志，停止线程A、B、C
     g_threadRuningFlag = false;
@@ -227,7 +228,6 @@ void CtestMultiThreadView::OnBnClickedStopButton()
         {
             // 有线程退出
             ++nExitThreadCount;
-            CString name[] = {_T("A"), _T("B"), _T("C")};
             CString str;
             str.Format("Thread %s 退出了~~~ 已退出 %d 个线程", name[dwRet], nExitThreadCount);
             UpdateList(str);
@@ -305,9 +305,9 @@ LRESULT CtestMultiThreadView::OnMessageC(WPARAM wParam, LPARAM lParam)
 
 void CtestMultiThreadView::OnBnClickedStartSynButton()
 {
-    m_ThreadNewAEvent = CreateEvent(NULL, TRUE, FALSE, "NewAEvent");
-    m_ThreadNewBEvent = CreateEvent(NULL, TRUE, FALSE, "NewBEvent");
-    m_ThreadNewCEvent = CreateEvent(NULL, TRUE, FALSE, "NewCEvent");
+    m_ThreadNewAEvent = CreateEvent(NULL, TRUE, FALSE, WORKER_EVENT_X);
+    m_ThreadNewBEvent = CreateEvent(NULL, TRUE, FALSE, WORKER_EVENT_Y);
+    m_ThreadNewCEvent = CreateEvent(NULL, TRUE, FALSE, WORKER_EVENT_Z);
 
     // 创建控制线程和工作线程
     m_pThreadNewA = AfxBeginThread(ThreadProcNewA, this->m_hWnd);
@@ -334,12 +334,15 @@ void CtestMultiThreadView::OnBnClickedStopSynButton()
     MSG msg;
     int nExitThreadCount = 0;
     int nWaitThreadCount = 4;
-    HANDLE handles[] = {(m_pThreadNewA->m_hThread), (m_pThreadNewB->m_hThread), (m_pThreadNewC->m_hThread), m_pThreadMaster->m_hThread};
+    HANDLE handles[] = {m_pThreadNewA->m_hThread, m_pThreadNewB->m_hThread, m_pThreadNewC->m_hThread, m_pThreadMaster->m_hThread};
+    CString name[] = {_T("NewA"), _T("NewB"), _T("NewC"), _T("Master")};
 
     // 线程退出标志，停止线程Master and NewA、NewB、NewC
     g_threadMasterRunning = false;
 
     // 等待线程退出
+
+    // TODO: 这里应该只等待Master线程退出即可，Master线程内部等待所有Worker线程退出之后再退出
     while(true) {
         DWORD dwRet = MsgWaitForMultipleObjects(nWaitThreadCount, handles, FALSE, INFINITE, QS_ALLINPUT);
 
@@ -359,7 +362,6 @@ void CtestMultiThreadView::OnBnClickedStopSynButton()
         {
             // 有线程退出
             ++nExitThreadCount;
-            CString name[] = {_T("NewA"), _T("NewB"), _T("NewC"), _T("Master")};
             CString str;
             str.Format("Thread %s 退出了~~~ 已退出 %d 个线程", name[dwRet], nExitThreadCount);
             UpdateList(str);
